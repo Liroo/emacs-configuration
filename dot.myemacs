@@ -1,0 +1,137 @@
+;; Switch between buffers
+(global-set-key [M-left] 'windmove-left)          ; move to left windnow
+(global-set-key [M-right] 'windmove-right)        ; move to right window
+(global-set-key [M-up] 'windmove-up)              ; move to upper window
+(global-set-key [M-down] 'windmove-down)          ; move to downer windows
+
+
+;; Indent whole buffer
+(defun iwb ()
+  "indent whole buffer"
+  (interactive)
+  (delete-trailing-whitespace)
+  (indent-region (point-min) (point-max) nil)
+  (untabify (point-min) (point-max)))
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(add-to-list 'auto-mode-alist '("\\.ml[iylp]?" . tuareg-mode))
+(autoload 'tuareg-mode "tuareg" "Major mode for editing Caml code" t)
+(autoload 'camldebug "camldebug" "Run the Caml debugger" t)
+(dolist (ext '(".cmo" ".cmx" ".cma" ".cmxa" ".cmi"))
+  (add-to-list 'completion-ignored-extensions ext))
+
+;; Auto-complete mod
+(add-to-list 'load-path "~/.emacs.d/auto-complete")
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories "~/.emacs.d/auto-complete/ac-dict")
+(ac-config-default)
+
+;; Lancer le man avec F3
+(defun vectra-man-on-word ()
+  "Appelle le man sur le mot pointe par le curseur"
+  (interactive)
+  (manual-entry (current-word)))
+(global-set-key [f3] 'vectra-man-on-word)
+
+;; Suppression des espaces en fin de ligne a l'enregistrement
+(add-hook 'c++-mode-hook '(lambda ()
+  (add-hook 'write-contents-hooks 'delete-trailing-whitespace nil t)))
+(add-hook   'c-mode-hook '(lambda ()
+  (add-hook 'write-contents-hooks 'delete-trailing-whitespace nil t)))
+
+;; Laisser le curseur en place lors d'un defilement par pages.
+;; Par defaut, Emacs place le curseur en debut ou fin d'ecran
+;; selon le sens du defilement.
+(setq scroll-preserve-screen-position t)
+
+;; Complette automatiquement ce que vous tapez dans le mini-buffer
+(icomplete-mode 1)
+
+;; Parenthese en couleur
+(custom-set-variables
+ '(show-paren-mode t))
+(custom-set-faces)
+
+;; yes > y | no > n
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;; Affiche le numero de ligne et de colonne
+(column-number-mode t)
+(line-number-mode t)
+
+;; Enlever le message au demarrage
+(setq inhibit-startup-message t)
+
+;; Remplacer le texte selectionne si on tape
+(delete-selection-mode t)
+
+;; ido mode
+(require 'ido)
+(ido-mode t)
+(setq ido-enable-flex-matching t)
+
+;; Reduit la fontion sur elle meme avec F1
+(add-hook 'c-mode-common-hook 'hs-minor-mode)
+(add-hook 'lisp-mode-hook 'hs-minor-mode)
+(add-hook 'emacs-lisp-mode-hook 'hs-minor-mode)
+(add-hook 'python-mode-hook 'hs-minor-mode)
+(global-set-key [f1] 'hs-hide-block)
+
+;; Et la 'de'reduit avec F2
+(global-set-key [f2] 'hs-show-block)
+
+;; Passe de ligne en ligne
+(setq scroll-step 1)
+
+;; Auto-refresh dired on file change
+(add-hook 'dired-mode-hook 'auto-revert-mode)
+
+(defun make-backup-file-name (FILE)
+  (let ((dirname (concat "~/.backups/emacs/"
+                         (format-time-string "%y/%m/%d/"))))
+    (if (not (file-exists-p dirname))
+        (make-directory dirname t))
+    (concat dirname (file-name-nondirectory FILE))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(require 'cl)
+
+;; Scroll and tree view
+;; my-buffer is supposed to be the buffer you are looking for
+(defun scroll-up-and-focus (click)
+  (interactive "e")
+  (mouse-set-point click)
+  (scroll-up-1)
+  )
+
+;; Scroll and tree view
+;; my-buffer is supposed to be the buffer you are looking for
+(defun scroll-down-and-focus (click)
+  (interactive "e")
+  (mouse-set-point click)
+  (scroll-down-1)
+  )
+
+(add-to-list 'load-path "~/.emacs.d/smooth-scroll")
+(add-to-list 'load-path "~/.emacs.d/neotree")
+(require 'neotree)
+(require 'smooth-scroll)
+(global-set-key [f8] 'neotree-toggle)
+(global-set-key (kbd "C-x n") 'neotree-show)
+(setq ring-bell-function 'ignore)
+(global-set-key [mouse-4] 'scroll-down-and-focus)
+(global-set-key [mouse-5] 'scroll-up-and-focus)
+(neotree-show)
+(xterm-mouse-mode)
+
+;; Get again undo and redo
+(global-set-key (kbd "C-u") 'undo-only)
+(global-set-key (kbd "C-r") 'undo)
+
+;; autopair
+(add-to-list 'load-path "~/.emacs.d/autopair")
+(require 'autopair)
+(autopair-global-mode) ;; enable autopair in all buffers
