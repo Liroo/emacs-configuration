@@ -5,11 +5,11 @@ My personal emacs configuration
 
 Emacs configuration using `neotree`, `autopair` and `smooth-scroll` used for C programing.
 
-This is many feature coming from *Epitech*.
+There is many feature coming from *Epitech*.
 
 #### Usage
 
-If you want to use such this configuration, be sure to save your old configuration.
+If you want to use such this configuration, be sure you saved your old configuration.
 
 - Rename dot.* to .*
 - Move .* to your home repository and be sure this is full compatible with your configuration
